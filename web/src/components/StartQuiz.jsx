@@ -21,6 +21,8 @@ export default function StartQuiz () {
   const [btnDisabled, setBtnDisabled] = useState()
   const [btnNextDisabled, setBtnNextDisabled] = useState(true)
 
+  const [timer, setTimer] = useState(15)
+
   useEffect(() => {
     fetch(
       `http://localhost:5000/api/categories/${category}?level=${level}&limit=${limit}`
@@ -33,6 +35,20 @@ export default function StartQuiz () {
       .catch((err) => console.log(err.message))
   }, [])
 
+  useEffect(() => {
+    if (!quizEnd && actualQuestion) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1)
+      }, 1000)
+
+      if (timer === 0) {
+        handleNextQuestion()
+      }
+
+      return () => clearInterval(interval)
+    }
+  }, [timer, quizEnd, actualQuestion])
+
   const clearState = () => {
     setActualQuestionIndex(0)
     setActualQuestion(quizzes[0])
@@ -40,6 +56,7 @@ export default function StartQuiz () {
     setQuizScore(0)
     setBtnDisabled(false)
     setShowFeedback(false)
+    setTimer(15)
   }
 
   const handlerSelectQuestion = (e) => {
@@ -72,6 +89,31 @@ export default function StartQuiz () {
     }
   }
 
+  const handleNextQuestion = () => {
+    if (actualQuizIndex < quizzes.length - 1) {
+      setActualQuestion(quizzes[actualQuizIndex + 1])
+      setActualQuestionIndex(actualQuizIndex + 1)
+      setBtnDisabled(false)
+      setBtnNextDisabled(true)
+      setShowFeedback(false)
+      setTimer(15)
+    } else {
+      setQuizEnd(true)
+    }
+  }
+
+  const getFinalMessage = () => {
+    if (quizScore >= 8) {
+      return `¡Felicitaciones!🎉, Conseguiste ${quizScore} de ${quizzes.length}`
+    } else if (quizScore >= 5) {
+      return `¡Qué bien!😎, Conseguiste ${quizScore} de ${quizzes.length}`
+    } else if (quizScore >= 1) {
+      return `Hay que estudiar 😅, Conseguiste ${quizScore} de ${quizzes.length}`
+    } else {
+      return `Lo siento 😓, Conseguiste ${quizScore} de ${quizzes.length}`
+    }
+  }
+
   return (
     <div className='container m-auto text-center w-8/12'>
       <div>
@@ -81,6 +123,7 @@ export default function StartQuiz () {
         {!quizEnd && (
           <>
             <p className='text-2xl mb-4'>Pregunta {actualQuizIndex + 1} de {quizzes.length}</p>
+            <p className='text-2xl mb-4'>Tiempo restante: {timer} segundos</p>
 
             {actualQuestion &&
               <div>
@@ -114,6 +157,12 @@ export default function StartQuiz () {
               </div>}
           </>
         )}
+
+        {quizEnd && (
+          <div className='mt-4 mb-4 text-3xl font-bold'>
+            {getFinalMessage()}
+          </div>
+        )}
       </div>
 
       <div className='d-grid'>
@@ -136,11 +185,7 @@ export default function StartQuiz () {
               className='btn btn-block btn-primary text-xl text-white disabled:btn-active disabled:text-white disabled:opacity-50 disabled:cursor-not-allowed mb-5'
               disabled={btnNextDisabled}
               onClick={() => {
-                setActualQuestion(quizzes[actualQuizIndex + 1])
-                setActualQuestionIndex(actualQuizIndex + 1)
-                setBtnDisabled(false)
-                setBtnNextDisabled(true)
-                setShowFeedback(false)
+                handleNextQuestion()
               }}
             >
               SIGUIENTE

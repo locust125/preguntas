@@ -4,7 +4,7 @@ import IconHamburguer from '@/components/icons/IconHamburguer'
 const Navigation = () => {
   return (
     <>
-      <div className='bg-sky-900'>
+      {/* <div className='bg-sky-900'>
         <div className='container mx-auto items-center'>
           <div className='navbar'>
             <div className='navbar-start'>
@@ -34,12 +34,12 @@ const Navigation = () => {
                   </li>
                 </ul>
               </div>
-              {/* <Link
+              <Link
                 to='/'
                 className='normal-case text-2xl cursor-pointer text-white no-underline'
               >
                 preguntAPI
-              </Link> */}
+              </Link> 
             </div>
             <div className='navbar-end hidden lg:flex'>
               <ul className='menu menu-horizontal p-0 m-0'>
@@ -52,18 +52,18 @@ const Navigation = () => {
                   </Link>
                 </li>
                 <li>
-                  {/* <Link
+                  <Link
                     to='/documentation'
                     className='hover:bg-white hover:text-black text-white no-underline'
                   >
                     Documentación
-                  </Link> */}
+                  </Link> 
                 </li>
               </ul>
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }
